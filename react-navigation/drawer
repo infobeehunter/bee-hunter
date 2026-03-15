@@ -1,0 +1,67 @@
+// AppDrawer.js
+import React from 'react';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, Drawer
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { COLORS } from './AppColors';
+// Importa le tue schermate (Esempio)
+import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import PartnersScreen from './screens/PartnersScreen';
+const Drawer = createDrawerNavigator();
+// Custom Header per il Menu Laterale con il tuo LOGO
+const CustomDrawerContent = (props) => {
+ return (
+ <DrawerContentScrollView {...props} style={{ backgroundColor: COLORS.light }
+ <View style={styles.drawerHeader}>
+ <Image
+ source={require('./assets/logo_bee_hunter.png')}
+ style={styles.logo}
+ resizeMode="contain"
+ />
+ <Text style={styles.brandName}>BEE HUNTER</Text>
+ </View>
+ <DrawerItemList {...props} />
+ <DrawerItem
+ label="Esci"
+ onPress={() => alert('Logout...')}
+ labelStyle={{ color: COLORS.dark }}
+ />
+ </DrawerContentScrollView>
+ );
+};
+export default function AppDrawer() {
+ return (
+ <Drawer.Navigator
+ drawerContent={(props) => <CustomDrawerContent {...props} />}
+ screenOptions={{
+ headerTintColor: COLORS.primary,
+ drawerActiveBackgroundColor: COLORS.secondary,
+ drawerActiveTintColor: COLORS.dark,
+ drawerInactiveTintColor: COLORS.dark,
+ }}
+ >
+ <Drawer.Screen name="Mappa di Bari" component={HomeScreen} />
+ <Drawer.Screen name="I Miei Badge" component={ProfileScreen} />
+ <Drawer.Screen name="Dove Mangiare & Fare" component={PartnersScreen} />
+ </Drawer.Navigator>
+ );
+}
+const styles = StyleSheet.create({
+ drawerHeader: {
+ height: 150,
+ backgroundColor: COLORS.primary,
+ alignItems: 'center',
+ justifyContent: 'center',
+ marginBottom: 20,
+ },
+ logo: {
+ width: 80,
+ height: 80,
+ },
+ brandName: {
+ color: COLORS.light,
+ fontSize: 20,
+ fontWeight: 'bold',
+ marginTop: 10,
+ }
+})
