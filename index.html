@@ -6,7 +6,8 @@
   <title>BEE HUNTER</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
-  <!-- Leaflet CSS -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
@@ -25,34 +26,28 @@
 
   <section id="map"></section>
 
+  <!-- Pagina dedicata esperienza -->
+  <section id="experienceDetail">
+    <h2 id="expName">Seleziona un'esperienza</h2>
+    <p id="expCategory"></p>
+
+    <div class="dropdown">
+      <button class="dropbtn">Dettagli</button>
+      <div class="dropdown-content" id="expDetails">
+        <!-- Qui appariranno descrizione, consigli, orari, prezzo -->
+      </div>
+    </div>
+
+    <button id="unlockBtn">Sblocca Badge</button>
+  </section>
+
   <section id="badges">
     <h2>Badge Sbloccati</h2>
     <ul id="badgeList"></ul>
     <p>Punti Totali: <span id="points">0</span></p>
   </section>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <!-- App JS -->
   <script src="app.js"></script>
 </body>
 </html>
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BEE HUNTER</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Manifest PWA -->
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Favicon / Logo -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-</head>
