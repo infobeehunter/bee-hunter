@@ -1,31 +1,37 @@
-// ===== Setup mappa =====
+// 1. Setup della mappa
 const map = L.map('map').setView([41.117, 16.871], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// ===== Punti di interesse =====
+// 2. Array dei punti di interesse con tutte le informazioni
 const poi = [
-  {name: "Basilica di San Nicola", category:"Culture Hunter", coords:[41.1186,16.8719]},
-  {name: "Tour Barca Porto", category:"Sea Hunter", coords:[41.1200,16.8700]},
-  {name: "Street Food Tour", category:"Food Hunter", coords:[41.1110,16.8725]},
-  {name: "Noleggio Bici", category:"Bike & Ride", coords:[41.1125,16.8720]},
-  {name: "Mercato Storico", category:"Local Services", coords:[41.1140,16.8705]}
+  { name: "Basilica di San Nicola", category: "Culture Hunter", coords:[41.1186,16.8719], description: "...", tips:"...", opening:"...", price:"..." },
+  { name: "Tour Barca Porto", category: "Sea Hunter", coords:[41.1200,16.8700], description: "...", tips:"...", opening:"...", price:"..." },
+  { name: "Street Food Tour", category: "Food Hunter", coords:[41.1110,16.8725], description:"...", tips:"...", opening:"...", price:"..." }
 ];
 
-// ===== Badge e punti =====
+// 3. Badge e punti
 let points = 0;
 const unlocked = [];
 const badgeList = document.getElementById('badgeList');
 const pointsEl = document.getElementById('points');
 
-// ===== Aggiungi marker =====
+// 4. Aggiungi marker alla mappa con popup dettagliati
 poi.forEach(p => {
   const marker = L.marker(p.coords).addTo(map)
-    .bindPopup(`<b>${p.name}</b><br>${p.category}<br><button onclick="unlockBadge('${p.name}')">Sblocca Badge</button>`);
+    .bindPopup(
+      `<b>${p.name}</b><br>
+       Categoria: ${p.category}<br>
+       Descrizione: ${p.description}<br>
+       Consigli: ${p.tips}<br>
+       Orari: ${p.opening}<br>
+       Prezzo: ${p.price}<br>
+       <button onclick="unlockBadge('${p.name}')">Sblocca Badge</button>`
+    );
 });
 
-// ===== Funzione sblocca badge =====
+// 5. Funzione sblocca badge
 function unlockBadge(name){
   if(!unlocked.includes(name)){
     unlocked.push(name);
@@ -38,10 +44,15 @@ function unlockBadge(name){
   }
 }
 
-// ===== Categorie cliccabili =====
+// 6. Categorie cliccabili che mostrano tutte le informazioni
 document.querySelectorAll('.category').forEach(cat => {
   cat.addEventListener('click', ()=>{
     const catName = cat.dataset.cat;
-    alert(`Mostriamo punti di interesse per: ${catName}`);
+    const items = poi.filter(p => p.category === catName);
+    let message = `Esperienze in ${catName}:\n\n`;
+    items.forEach(i => {
+      message += `${i.name}\nDescrizione: ${i.description}\nConsigli: ${i.tips}\nOrari: ${i.opening}\nPrezzo: ${i.price}\n\n`;
+    });
+    alert(message);
   });
 });
