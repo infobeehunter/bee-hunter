@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BEE HUNTER - Bari in Tasca</title>
+  <title>BEE HUNTER</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
-  <!-- Leaflet per la mappa -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
@@ -15,29 +15,25 @@
     <p>Scopri Bari giocando!</p>
   </header>
 
-  <main>
-    <!-- Mappa -->
-    <div id="map"></div>
+  <section id="categories">
+    <div class="category" data-cat="Sea Hunter">🌊 Sea Hunter</div>
+    <div class="category" data-cat="Bike & Ride">🚴 Bike & Ride</div>
+    <div class="category" data-cat="Food Hunter">🍝 Food Hunter</div>
+    <div class="category" data-cat="Culture Hunter">🏛️ Culture Hunter</div>
+    <div class="category" data-cat="Local Services">🛍️ Local Services</div>
+  </section>
 
-    <!-- Categorie -->
-    <section id="categories">
-      <h2>Categorie Hunter</h2>
-      <div class="category" data-category="Sea Hunter">🌊 Sea Hunter</div>
-      <div class="category" data-category="Bike & Ride">🚴 Bike & Ride</div>
-      <div class="category" data-category="Food Hunter">🍝 Food Hunter</div>
-      <div class="category" data-category="Culture Hunter">🏛️ Culture Hunter</div>
-      <div class="category" data-category="Local Services">🛍️ Local Services</div>
-    </section>
+  <section id="map"></section>
 
-    <!-- Badge e Punti -->
-    <section id="badges">
-      <h2>Badge Sbloccati</h2>
-      <ul id="badgeList"></ul>
-      <p>Punti Totali: <span id="points">0</span></p>
-    </section>
-  </main>
+  <section id="badges">
+    <h2>Badge Sbloccati</h2>
+    <ul id="badgeList"></ul>
+    <p>Punti Totali: <span id="points">0</span></p>
+  </section>
 
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- App JS -->
   <script src="app.js"></script>
 </body>
 </html>
