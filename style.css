@@ -1,0 +1,76 @@
+/* ===== Stile Generale ===== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f9f9f9;
+}
+
+/* ===== Header ===== */
+header {
+    background: #007BFF; /* blu mare */
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+}
+header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+header p {
+    margin: 5px 0 0 0;
+}
+
+/* ===== Mappa ===== */
+#map {
+    height: 350px;
+    margin: 15px;
+    border-radius: 10px;
+    border: 2px solid #007BFF;
+}
+
+/* ===== Sezioni ===== */
+section {
+    margin: 15px;
+}
+
+/* ===== Categorie ===== */
+.category {
+    padding: 12px;
+    margin: 8px 0;
+    background: #FFD700; /* giallo */
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+.category:hover {
+    background: #FFC107; /* giallo più acceso al passaggio del mouse */
+}
+
+/* ===== Badge ===== */
+#badges ul {
+    list-style: none;
+    padding: 0;
+}
+#badges li {
+    background: #e0f7fa; /* celeste chiaro */
+    margin: 6px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* ===== Punti Totali ===== */
+#points {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+/* ===== Mobile responsive ===== */
+@media (max-width: 600px) {
+    header h1 { font-size: 1.5em; }
+    #map { height: 250px; }
+    .category { padding: 10px; font-size: 0.9em; }
+    #badges li { padding: 6px 10px; font-size: 0.9em; }
+}
