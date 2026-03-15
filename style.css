@@ -13,13 +13,8 @@ header {
     text-align: center;
     padding: 15px 0;
 }
-header h1 {
-    margin: 0;
-    font-size: 2em;
-}
-header p {
-    margin: 5px 0 0 0;
-}
+header h1 { margin: 0; font-size: 2em; }
+header p { margin: 5px 0 0 0; }
 
 /* ===== Mappa ===== */
 #map {
@@ -30,9 +25,7 @@ header p {
 }
 
 /* ===== Sezioni ===== */
-section {
-    margin: 15px;
-}
+section { margin: 15px; }
 
 /* ===== Categorie ===== */
 .category {
@@ -44,15 +37,10 @@ section {
     font-weight: bold;
     transition: background 0.3s;
 }
-.category:hover {
-    background: #FFC107; /* giallo più acceso al passaggio del mouse */
-}
+.category:hover { background: #FFC107; }
 
 /* ===== Badge ===== */
-#badges ul {
-    list-style: none;
-    padding: 0;
-}
+#badges ul { list-style: none; padding: 0; }
 #badges li {
     background: #e0f7fa; /* celeste chiaro */
     margin: 6px 0;
@@ -62,10 +50,29 @@ section {
 }
 
 /* ===== Punti Totali ===== */
-#points {
-    font-weight: bold;
-    color: #007BFF;
+#points { font-weight: bold; color: #007BFF; }
+
+/* ===== Dropdown esperienza ===== */
+.dropdown { position: relative; display: inline-block; margin: 10px 0; }
+.dropbtn {
+    background-color: #FFD700;
+    color: black;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
+.dropdown-content {
+    display: none;
+    position: relative;
+    background-color: #e0f7fa;
+    min-width: 250px;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+.dropdown.show .dropdown-content { display: block; }
 
 /* ===== Mobile responsive ===== */
 @media (max-width: 600px) {
@@ -73,4 +80,5 @@ section {
     #map { height: 250px; }
     .category { padding: 10px; font-size: 0.9em; }
     #badges li { padding: 6px 10px; font-size: 0.9em; }
+    .dropbtn { font-size: 14px; padding: 8px; }
 }
