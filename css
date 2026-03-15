@@ -1,0 +1,8 @@
+body { font-family: Arial, sans-serif; margin:0; padding:0; }
+header { background:#007BFF; color:white; text-align:center; padding:10px 0; }
+#map { height: 300px; margin: 10px; border-radius:10px; }
+section { margin: 15px; }
+.category { padding:10px; margin:5px 0; background:#FFD700; border-radius:5px; cursor:pointer; }
+.category:hover { background:#FFC107; }
+#badges ul { list-style:none; padding:0; }
+#badges li { background:#e0f7fa; margin:5px 0; padding:5px 10px; border-radius:5px; }
