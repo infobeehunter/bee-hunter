@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeHunter - Scopri Bari</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --bg-white: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.875rem;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .header-btn:hover {
+            color: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 6rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-header {
+            padding: 1.5rem 1rem 1rem;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .page-body {
+            padding: 1rem;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            ring: 2px var(--primary);
+            border-color: var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .poi-list {
+            border-top: 1px solid var(--border);
+            background: var(--bg-white);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .poi-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .poi-item:hover {
+            background: var(--bg);
+        }
+
+        .poi-item-header {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .poi-item-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .poi-item-desc {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .poi-item-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .xp-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .discount-badge {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .card-desc {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 0.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .premium-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .premium-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .premium-card p {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .premium-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .premium-features {
+            list-style: none;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .premium-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .premium-features span {
+            color: #10b981;
+        }
+
+        .user-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .user-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-info p {
+            opacity: 0.9;
+            font-size: 0.875rem;
+        }
+
+        .user-avatar {
+            font-size: 2.5rem;
+        }
+
+        .premium-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 0.75rem;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+        }
+
+        .leaderboard-name p {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .leaderboard-name span {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .leaderboard-xp {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .activity-item {
+            padding: 0.75rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-meta {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .activity-xp {
+            color: #f59e0b;
+            font-weight: 700;
+            float: right;
+        }
+
+        .share-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .share-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-family: inherit;
+            font-size: 0.875rem;
+            resize: vertical;
+        }
+
+        .share-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .share-btn {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .share-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .share-btn.instagram {
+            background: #e1306c;
+        }
+
+        .share-btn.tiktok {
+            background: #000000;
+        }
+
+        .share-btn.twitter {
+            background: #1d9bf0;
+        }
+
+        .share-btn.facebook {
+            background: #1877f2;
+        }
+
+        .share-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge-item {
+            text-align: center;
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-clamp: 2;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            height: 5rem;
+            z-index: 50;
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.2s;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .button {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: center;
+        }
+
+        .button.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .button.outline {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .button.outline:hover {
+            background: var(--bg);
+        }
+
+        .button.danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .button.danger:hover {
+            background: #dc2626;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 60;
+            align-items: flex-end;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            width: 100%;
+            border-radius: 1.5rem 1.5rem 0 0;
+            padding: 1.5rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .modal-section {
+            margin-bottom: 1rem;
+        }
+
+        .modal-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .modal-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-code {
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--border);
+            font-family: monospace;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .modal-buttons .button {
+            flex: 1;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 7rem;
+            left: 1rem;
+            right: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: var(--bg-white);
+            box-shadow: var(--shadow-lg);
+            z-index: 70;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .login-subtitle {
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .login-btn {
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .about-link {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .about-link:hover {
+            color: var(--primary);
+        }
+
+        .tour-image {
+            width: 100%;
+            height: 10rem;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .counter {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .counter-btn {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .counter-value {
+            width: 3rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .price-summary {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-row.total {
+            border-top: 1px solid var(--border);
+            padding-top: 0.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .notification-item {
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            color: var(--text-light);
+            font-size: 0.75rem;
+        }
+
+        .stats-list {
+            space-y: 0.5rem;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+
+        .stats-label {
+            color: var(--text-light);
+        }
+
+        .stats-value {
+            font-weight: 600;
+        }
+
+        .poi-detail-card {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            max-width: 20rem;
+            background: var(--bg-white);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 20;
+        }
+
+        .poi-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .poi-detail-title {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .poi-detail-title h3 {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .poi-detail-desc {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .poi-detail-distance {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .poi-detail-xp {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 1.25rem;
+        }
+
+        .close-btn:hover {
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <div class="header" id="header" style="display: none;">
+            <h1>🐝 BeeHunter</h1>
+            <button class="header-btn" onclick="showPage('about')">Chi Siamo</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Login Screen -->
+            <div id="login-page" class="page active">
+                <div class="login-screen">
+                    <button class="about-link" onclick="showPage('about')">Chi Siamo</button>
+                    <div class="login-logo">🐝</div>
+                    <h1 class="login-title">BeeHunter</h1>
+                    <p class="login-subtitle">Esplora Bari e guadagna XP!</p>
+                    <button class="login-btn" onclick="login()">Accedi</button>
+                </div>
+            </div>
+
+            <!-- Radar Page -->
+            <div id="radar-page" class="page">
+                <div class="page-header">
+                    <h2>📍 Radar</h2>
+                    <p>Scopri i luoghi di Bari</p>
+                </div>
+                <div class="page-body">
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="Cerca un luogo..." onkeyup="filterPOI()">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="filter-buttons" id="category-filters"></div>
+                    <div class="map-container">📍 Mappa non disponibile<br><small>Aggiungi una chiave API di Google Maps</small></div>
+                    <div class="poi-list" id="poi-list"></div>
+                    <div id="poi-detail-modal" class="poi-detail-card" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Tour Page -->
+            <div id="tour-page" class="page">
+                <div class="page-header">
+                    <h2>🎫 Tour</h2>
+                    <p>Esperienze guidate a Bari</p>
+                </div>
+                <div class="page-body" id="tour-list"></div>
+                <div id="tour-modal" class="modal"></div>
+            </div>
+
+            <!-- Shop Page -->
+            <div id="shop-page" class="page">
+                <div class="page-header">
+                    <h2>🛍️ Shop</h2>
+                    <p>Coupon e abbonamenti</p>
+                </div>
+                <div class="page-body">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab('coupon')">🎁 Coupon</button>
+                        <button class="tab-btn" onclick="switchTab('premium')">⚡ Premium</button>
+                    </div>
+                    <div id="coupon-tab" class="tab-content"></div>
+                    <div id="premium-tab" class="tab-content" style="display: none;"></div>
+                </div>
+                <div id="coupon-modal" class="modal"></div>
+            </div>
+
+            <!-- Social Page -->
+            <div id="social-page" class="page">
+                <div class="page-header">
+                    <h2>👥 Social</h2>
+                    <p>Condividi e competi</p>
+                </div>
+                <div class="page-body">
+                    <div class="share-card">
+                        <h3 style="font-weight: 700; margin-bottom: 0.75rem;">Condividi la tua avventura</h3>
+                        <textarea id="share-content" class="share-textarea" placeholder="Scrivi un messaggio personalizzato... (opzionale)" rows="3"></textarea>
+                        <div class="share-buttons">
+                            <button class="share-btn instagram" onclick="share('instagram')"><div class="share-icon">📷</div>Instagram</button>
+                            <button class="share-btn tiktok" onclick="share('tiktok')"><div class="share-icon">🎵</div>TikTok</button>
+                            <button class="share-btn twitter" onclick="share('twitter')"><div class="share-icon">𝕏</div>Twitter</button>
+                            <button class="share-btn facebook" onclick="share('facebook')"><div class="share-icon">👍</div>Facebook</button>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.75rem;">Condividi con #BeeHunter e guadagna +25 XP!</p>
+                    </div>
+
+                    <h3 style="font-weight: 700; margin: 1rem 0 0.75rem; display: flex; gap: 0.5rem; align-items: center;"><span style="font-size: 1.5rem;">🏆</span> Classifica Settimanale</h3>
+                    <div id="leaderboard" class="card"></div>
+
+                    <h3 style="font-weight: 700; margin: 1rem 0 0.75rem; display: flex; gap: 0.5rem; align-items: center;"><span style="font-size: 1.5rem;">📱</span> Attività Recente</h3>
+                    <div id="activity-feed"></div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page">
+                <div class="page-header">
+                    <h2>👤 Profilo</h2>
+                    <p>Il tuo account BeeHunter</p>
+                </div>
+                <div class="page-body">
+                    <div class="user-card">
+                        <div class="user-info">
+                            <h2 id="user-name">Marco Rossi</h2>
+                            <p id="user-email">marco@example.com</p>
+                            <div class="premium-badge" id="premium-badge" style="display: none;">⭐ Premium</div>
+                        </div>
+                        <div class="user-avatar">🐝</div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-label">XP Totali</div>
+                            <div class="stat-value" id="stat-xp">2450</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-label">Streak</div>
+                            <div class="stat-value" id="stat-streak">12</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-label">Badge</div>
+                            <div class="stat-value" id="stat-badges">3</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-weight: 700; margin-bottom: 0.75rem;">Statistiche</h3>
+                        <div class="stats-list">
+                            <div class="stats-row">
+                                <span class="stats-label">Prenotazioni</span>
+                                <span class="stats-value" id="stat-bookings">5</span>
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-label">Ultimi check-in</span>
+                                <span class="stats-value" id="stat-checkins">12</span>
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-label">Membro da</span>
+                                <span class="stats-value" id="stat-member">15/01/2024</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-weight: 700; margin-bottom: 0.75rem;">🏅 I tuoi Badge</h3>
+                        <div class="badge-grid" id="badge-grid"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-weight: 700; margin-bottom: 0.75rem;">Notifiche Recenti</h3>
+                        <div id="notifications-list"></div>
+                    </div>
+
+                    <button class="button outline" style="margin-bottom: 0.75rem;">⚙️ Impostazioni</button>
+                    <button class="button outline" style="margin-bottom: 0.75rem;">🔥 Sfide Attive</button>
+                    <button class="button danger" onclick="logout()">🚪 Logout</button>
+
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; color: var(--text-light);">
+                        <p>BeeHunter v1.0.0</p>
+                        <p style="margin-top: 0.5rem;"><a href="#" style="color: var(--primary); text-decoration: none;">Privacy Policy</a> • <a href="#" style="color: var(--primary); text-decoration: none;">Termini di Servizio</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Page -->
+            <div id="about-page" class="page">
+                <div class="page-header">
+                    <h2>ℹ️ Chi Siamo</h2>
+                    <p>Scopri BeeHunter</p>
+                </div>
+                <div class="page-body">
+                    <div class="card">
+                        <h3 style="font-weight: 700; margin-bottom: 0.75rem;">🐝 BeeHunter</h3>
+                        <p style="margin-bottom: 1rem;">BeeHunter è un'app gamificata per esplorare la città di Bari. Scopri luoghi interessanti, guadagna XP, completa sfide e competi con altri utenti!</p>
+                        
+                        <h4 style="font-weight: 700; margin: 1rem 0 0.5rem;">Funzionalità</h4>
+                        <ul style="margin-left: 1rem; margin-bottom: 1rem;">
+                            <li>📍 Mappa interattiva con POI categorizzati</li>
+                            <li>🎫 Tour guidati e prenotazioni</li>
+                            <li>🛍️ Coupon e abbonamento premium</li>
+                            <li>👥 Condivisione social e classifica</li>
+                            <li>🏆 Sistema di badge e achievement</li>
+                        </ul>
+
+                        <h4 style="font-weight: 700; margin: 1rem 0 0.5rem;">Contatti</h4>
+                        <p>Email: info@beehunter.it</p>
+                        <p>Sito: www.beehunter.it</p>
+                    </div>
+                    <button class="button primary" onclick="goBack()" style="margin-top: 1rem;">← Indietro</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="bottom-nav" style="display: none;">
+            <button class="nav-item active" onclick="showPage('radar')"><span class="nav-icon">📍</span><span>RADAR</span></button>
+            <button class="nav-item" onclick="showPage('tour')"><span class="nav-icon">🎫</span><span>TOUR</span></button>
+            <button class="nav-item" onclick="showPage('shop')"><span class="nav-icon">🛍️</span><span>SHOP</span></button>
+            <button class="nav-item" onclick="showPage('social')"><span class="nav-icon">👥</span><span>SOCIAL</span></button>
+            <button class="nav-item" onclick="showPage('profile')"><span class="nav-icon">👤</span><span>IO</span></button>
+        </div>
+    </div>
+
+    <script>
+        // ===========================
+        // STATE MANAGEMENT
+        // ===========================
+        let appState = {
+            isLoggedIn: false,
+            currentPage: 'radar',
+            previousPage: null,
+            user: {
+                id: 1,
+                name: 'Marco Rossi',
+                email: 'marco@example.com',
+                xpTotal: 2450,
+                streakDays: 12,
+                premiumUntil: null,
+                createdAt: '2024-01-15',
+                bookingCount: 5,
+                checkInCount: 12
+            },
+            pois: [
+                { id: 1, name: 'Basilica di San Nicola', description: 'Una delle chiese più importanti di Bari', category: 'Cultura', latitude: 41.1371, longitude: 16.8755, xpReward: 100, icon: '🏛️' },
+                { id: 2, name: 'Lungomare di Bari', description: 'Bellissima passeggiata sul mare', category: 'Natura', latitude: 41.1285, longitude: 16.8795, xpReward: 75, icon: '🌿' },
+                { id: 3, name: 'Bari Vecchia', description: 'Il centro storico affascinante', category: 'Cultura', latitude: 41.1340, longitude: 16.8740, xpReward: 150, icon: '🏛️' },
+                { id: 4, name: 'Parco 2 Giugno', description: 'Bellissimo parco con vista sul mare', category: 'Natura', latitude: 41.1250, longitude: 16.8850, xpReward: 50, icon: '🌿' },
+                { id: 5, name: 'Ristorante Locale', description: 'Cucina tipica barese', category: 'Food', latitude: 41.1300, longitude: 16.8700, xpReward: 75, icon: '🍽️' },
+                { id: 6, name: 'Luogo Segreto', description: 'Un posto nascosto da scoprire', category: 'Segreto', latitude: 41.1400, longitude: 16.8800, xpReward: 200, icon: '🔐' }
+            ],
+            coupons: [
+                { id: 1, title: 'Sconto Gelato', description: 'Sconto del 20% su gelati', discount: '-20%', code: 'GELATO20', expiresAt: '2026-04-17' },
+                { id: 2, title: 'Pizza Gratis', description: 'Compra una pizza, la seconda è gratis', discount: '-50%', code: 'PIZZA2X', expiresAt: '2026-04-02' },
+                { id: 3, title: 'Caffè Sconto', description: 'Sconto del 30% su bevande', discount: '-30%', code: 'CAFFE30', expiresAt: '2026-05-02' }
+            ],
+            tours: [
+                { id: 1, title: 'Tour Bari Vecchia', description: 'Scopri i segreti del centro storico', price: '15.00', duration: 2, maxParticipants: 20, imageUrl: '🏛️' },
+                { id: 2, title: 'Tour Lungomare', description: 'Passeggiata panoramica sul mare', price: '10.00', duration: 1.5, maxParticipants: 15, imageUrl: '🌊' },
+                { id: 3, title: 'Food Tour', description: 'Assaggia i piatti tipici barese', price: '25.00', duration: 3, maxParticipants: 10, imageUrl: '🍽️' }
+            ],
+            leaderboard: [
+                { userId: 1, name: 'Alessandro', xp: 5200 },
+                { userId: 2, name: 'Giulia', xp: 4800 },
+                { userId: 3, name: 'Marco', xp: 2450 },
+                { userId: 4, name: 'Sofia', xp: 3100 },
+                { userId: 5, name: 'Luca', xp: 2800 },
+                { userId: 6, name: 'Emma', xp: 2600 },
+                { userId: 7, name: 'Andrea', xp: 2400 },
+                { userId: 8, name: 'Chiara', xp: 2200 },
+                { userId: 9, name: 'Matteo', xp: 2000 },
+                { userId: 10, name: 'Sara', xp: 1800 }
+            ],
+            badges: [
+                { id: 1, name: 'Primo Check-in', icon: '🎯' },
+                { id: 2, name: 'Explorer', icon: '🗺️' },
+                { id: 3, name: 'Foodie', icon: '🍽️' }
+            ],
+            notifications: [
+                { id: 1, title: 'Check-in completato', message: 'Bari Vecchia' },
+                { id: 2, title: 'Badge guadagnato', message: 'Explorer' },
+                { id: 3, title: 'Condivisione social', message: 'Lungomare' }
+            ],
+            selectedPOI: null,
+            selectedCoupon: null,
+            selectedTour: null,
+            userLocation: { lat: 41.1371, lon: 16.8755 },
+            searchQuery: '',
+            selectedCategory: null,
+            tourParticipants: 1,
+            currentTab: 'coupon'
+        };
+
+        // ===========================
+        // UTILITY FUNCTIONS
+        // ===========================
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = ((lat2 - lat1) * Math.PI) / 180;
+            const dLon = ((lon2 - lon1) * Math.PI) / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return (R * c).toFixed(1);
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('it-IT');
+        }
+
+        // ===========================
+        // PAGE NAVIGATION
+        // ===========================
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(`${pageName}-page`).classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.classList.remove('active');
+            });
+            
+            const navItems = ['radar', 'tour', 'shop', 'social', 'profile'];
+            const navIndex = navItems.indexOf(pageName);
+            if (navIndex >= 0) {
+                document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+            }
+
+            // Store previous page
+            appState.previousPage = appState.currentPage;
+            appState.currentPage = pageName;
+
+            // Initialize page content
+            if (pageName === 'radar') initRadar();
+            if (pageName === 'tour') initTour();
+            if (pageName === 'shop') initShop();
+            if (pageName === 'social') initSocial();
+            if (pageName === 'profile') initProfile();
+        }
+
+        function goBack() {
+            if (appState.previousPage) {
+                showPage(appState.previousPage);
+            } else {
+                showPage('radar');
+            }
+        }
+
+        // ===========================
+        // AUTHENTICATION
+        // ===========================
+        function login() {
+            appState.isLoggedIn = true;
+            document.getElementById('login-page').classList.remove('active');
+            document.getElementById('header').style.display = 'flex';
+            document.getElementById('bottom-nav').style.display = 'flex';
+            showPage('radar');
+            showToast('✅ Accesso effettuato!', 'success');
+        }
+
+        function logout() {
+            if (confirm('Sei sicuro di voler uscire?')) {
+                appState.isLoggedIn = false;
+                document.getElementById('header').style.display = 'none';
+                document.getElementById('bottom-nav').style.display = 'none';
+                document.getElementById('login-page').classList.add('active');
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                showToast('👋 Logout effettuato', 'success');
+            }
+        }
+
+        // ===========================
+        // RADAR PAGE
+        // ===========================
+        function initRadar() {
+            renderCategoryFilters();
+            renderPOIList();
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('category-filters');
+            container.innerHTML = '';
+            
+            const categories = ['Tutti', 'Cultura', 'Natura', 'Food', 'Eventi', 'Segreto'];
+            const icons = { 'Tutti': '', 'Cultura': '🏛️', 'Natura': '🌿', 'Food': '🍽️', 'Eventi': '🎉', 'Segreto': '🔐' };
+            
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `filter-btn ${appState.selectedCategory === (cat === 'Tutti' ? null : cat) ? 'active' : ''}`;
+                btn.textContent = (icons[cat] ? icons[cat] + ' ' : '') + cat;
+                btn.onclick = () => {
+                    appState.selectedCategory = cat === 'Tutti' ? null : cat;
+                    renderCategoryFilters();
+                    renderPOIList();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function filterPOI() {
+            appState.searchQuery = document.getElementById('search-input').value.toLowerCase();
+            renderPOIList();
+        }
+
+        function renderPOIList() {
+            const container = document.getElementById('poi-list');
+            container.innerHTML = '';
+            
+            let filtered = appState.pois;
+            
+            if (appState.selectedCategory) {
+                filtered = filtered.filter(p => p.category === appState.selectedCategory);
+            }
+            
+            if (appState.searchQuery) {
+                filtered = filtered.filter(p => 
+                    p.name.toLowerCase().includes(appState.searchQuery) ||
+                    p.description.toLowerCase().includes(appState.searchQuery)
+                );
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--text-light);">Nessun POI trovato</div>';
+                return;
+            }
+            
+            filtered.forEach(poi => {
+                const distance = calculateDistance(
+                    appState.userLocation.lat, appState.userLocation.lon,
+                    poi.latitude, poi.longitude
+                );
+                
+                const item = document.createElement('div');
+                item.className = 'poi-item';
+                item.innerHTML = `
+                    <div class="poi-item-header">
+                        <span style="font-size: 1rem;">${poi.icon}</span>
+                        <span class="poi-item-name">${poi.name}</span>
+                    </div>
+                    <div class="poi-item-desc">${poi.description}</div>
+                    <div class="poi-item-meta">
+                        <span>📍 ${distance} km</span>
+                        <span class="xp-badge">+${poi.xpReward} XP</span>
+                    </div>
+                `;
+                item.onclick = () => showPOIDetail(poi);
+                container.appendChild(item);
+            });
+        }
+
+        function showPOIDetail(poi) {
+            appState.selectedPOI = poi;
+            const distance = calculateDistance(
+                appState.userLocation.lat, appState.userLocation.lon,
+                poi.latitude, poi.longitude
+            );
+            
+            const modal = document.getElementById('poi-detail-modal');
+            modal.innerHTML = `
+                <div class="poi-detail-header">
+                    <div class="poi-detail-title">
+                        <span style="font-size: 1.5rem;">${poi.icon}</span>
+                        <h3>${poi.name}</h3>
+                    </div>
+                    <button class="close-btn" onclick="document.getElementById('poi-detail-modal').style.display = 'none';">✕</button>
+                </div>
+                <div class="poi-detail-desc">${poi.description}</div>
+                <div class="poi-detail-distance">📍 ${distance} km</div>
+                <div class="poi-detail-xp">
+                    <span class="xp-badge">+${poi.xpReward} XP</span>
+                    <span style="font-size: 0.75rem; color: var(--text-light);">${poi.category}</span>
+                </div>
+                <button class="button primary" onclick="checkIn(${poi.id})">📍 Check-in</button>
+            `;
+            modal.style.display = 'block';
+        }
+
+        function checkIn(poiId) {
+            const poi = appState.pois.find(p => p.id === poiId);
+            if (poi) {
+                appState.user.xpTotal += poi.xpReward;
+                showToast(`✅ Check-in a ${poi.name}! +${poi.xpReward} XP`, 'success');
+                document.getElementById('poi-detail-modal').style.display = 'none';
+                document.getElementById('stat-xp').textContent = appState.user.xpTotal;
+            }
+        }
+
+        // ===========================
+        // TOUR PAGE
+        // ===========================
+        function initTour() {
+            renderTourList();
+        }
+
+        function renderTourList() {
+            const container = document.getElementById('tour-list');
+            container.innerHTML = '';
+            
+            appState.tours.forEach(tour => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.cursor = 'pointer';
+                card.innerHTML = `
+                    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">${tour.imageUrl}</div>
+                    <h3 style="font-weight: 700; margin-bottom: 0.5rem;">${tour.title}</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">${tour.description}</p>
+                    <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        <span>⏱️ ${tour.duration}h</span>
+                        <span>👥 Max ${tour.maxParticipants}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.125rem; font-weight: 700; color: var(--primary);">€${tour.price}</span>
+                        <button class="button primary" style="width: auto; padding: 0.5rem 1rem;">Prenota</button>
+                    </div>
+                `;
+                card.onclick = () => showTourDetail(tour);
+                container.appendChild(card);
+            });
+        }
+
+        function showTourDetail(tour) {
+            appState.selectedTour = tour;
+            appState.tourParticipants = 1;
+            
+            const modal = document.getElementById('tour-modal');
+            const totalPrice = (parseFloat(tour.price) * appState.tourParticipants).toFixed(2);
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">${tour.title}</div>
+                    <p style="margin-bottom: 1rem;">${tour.description}</p>
+                    
+                    <div class="modal-section">
+                        <label class="modal-label">Numero di partecipanti</label>
+                        <div class="counter">
+                            <button class="counter-btn" onclick="changeTourParticipants(-1)">−</button>
+                            <span class="counter-value" id="tour-participants">${appState.tourParticipants}</span>
+                            <button class="counter-btn" onclick="changeTourParticipants(1)">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="price-summary">
+                        <div class="price-row">
+                            <span>Prezzo unitario</span>
+                            <span>€${tour.price}</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Quantità</span>
+                            <span>×${appState.tourParticipants}</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Totale</span>
+                            <span id="tour-total-price">€${totalPrice}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button class="button outline" onclick="modal.classList.remove('active')">Annulla</button>
+                        <button class="button primary" onclick="bookTour(${tour.id})">Procedi al pagamento</button>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function changeTourParticipants(delta) {
+            const tour = appState.selectedTour;
+            appState.tourParticipants = Math.max(1, Math.min(tour.maxParticipants, appState.tourParticipants + delta));
+            document.getElementById('tour-participants').textContent = appState.tourParticipants;
+            const totalPrice = (parseFloat(tour.price) * appState.tourParticipants).toFixed(2);
+            document.getElementById('tour-total-price').textContent = `€${totalPrice}`;
+        }
+
+        function bookTour(tourId) {
+            const tour = appState.tours.find(t => t.id === tourId);
+            if (tour) {
+                showToast(`✅ Prenotazione per ${tour.title}! +50 XP bonus`, 'success');
+                appState.user.xpTotal += 50;
+                appState.user.bookingCount++;
+                document.getElementById('tour-modal').classList.remove('active');
+                document.getElementById('stat-xp').textContent = appState.user.xpTotal;
+            }
+        }
+
+        // ===========================
+        // SHOP PAGE
+        // ===========================
+        function initShop() {
+            renderCouponTab();
+            renderPremiumTab();
+        }
+
+        function switchTab(tab) {
+            appState.currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tab}-tab`).style.display = 'block';
+        }
+
+        function renderCouponTab() {
+            const container = document.getElementById('coupon-tab');
+            container.innerHTML = '';
+            
+            appState.coupons.forEach(coupon => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.cursor = 'pointer';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${coupon.title}</h3>
+                        <span class="discount-badge">${coupon.discount}</span>
+                    </div>
+                    <p class="card-desc">${coupon.description}</p>
+                    <div class="card-footer">
+                        <span>Scade: ${formatDate(coupon.expiresAt)}</span>
+                        <button class="button primary" style="width: auto; padding: 0.5rem 1rem;">Riscatta</button>
+                    </div>
+                `;
+                card.onclick = () => showCouponDetail(coupon);
+                container.appendChild(card);
+            });
+        }
+
+        function renderPremiumTab() {
+            const container = document.getElementById('premium-tab');
+            container.innerHTML = `
+                <div class="premium-card">
+                    <h3>BeeHunter Premium</h3>
+                    <p>Sblocca tutte le funzionalità</p>
+                    <div class="premium-price">€9.99</div>
+                    <ul class="premium-features">
+                        <li><span>✓</span> Accesso a tutti i POI segreti</li>
+                        <li><span>✓</span> Doppio XP su tutti i check-in</li>
+                        <li><span>✓</span> Coupon esclusivi</li>
+                        <li><span>✓</span> Supporto prioritario</li>
+                        <li><span>✓</span> Badge premium esclusivo</li>
+                    </ul>
+                    <button class="button primary" onclick="subscribePremium()">Sottoscrivi per €9.99/mese</button>
+                    ${appState.user.premiumUntil ? `<p style="text-align: center; color: var(--success); margin-top: 0.75rem; font-size: 0.875rem;">✓ Premium attivo fino al ${formatDate(appState.user.premiumUntil)}</p>` : ''}
+                </div>
+                
+                <div class="card">
+                    <h3 style="font-weight: 700; margin-bottom: 0.75rem;">Confronta i piani</h3>
+                    <div class="stats-list">
+                        <div class="stats-row">
+                            <span class="stats-label">POI Segreti</span>
+                            <span class="stats-value">Premium</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="stats-label">Moltiplicatore XP</span>
+                            <span class="stats-value">2x</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="stats-label">Coupon esclusivi</span>
+                            <span class="stats-value">Illimitati</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showCouponDetail(coupon) {
+            appState.selectedCoupon = coupon;
+            const modal = document.getElementById('coupon-modal');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">${coupon.title}</div>
+                    <p style="margin-bottom: 1rem;">${coupon.description}</p>
+                    
+                    <div class="modal-section">
+                        <label class="modal-label">Sconto</label>
+                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--danger);">${coupon.discount}</div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <label class="modal-label">Codice coupon</label>
+                        <div class="modal-code">${coupon.code}</div>
+                    </div>
+                    
+                    <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 1rem;">Scade il ${formatDate(coupon.expiresAt)}</p>
+                    
+                    <div class="modal-buttons">
+                        <button class="button outline" onclick="modal.classList.remove('active')">Chiudi</button>
+                        <button class="button primary" onclick="redeemCoupon(${coupon.id})">Riscatta</button>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function redeemCoupon(couponId) {
+            const coupon = appState.coupons.find(c => c.id === couponId);
+            if (coupon) {
+                showToast(`✅ Coupon riscattato! +50 XP bonus`, 'success');
+                appState.user.xpTotal += 50;
+                document.getElementById('coupon-modal').classList.remove('active');
+                document.getElementById('stat-xp').textContent = appState.user.xpTotal;
+            }
+        }
+
+        function subscribePremium() {
+            if (!appState.user.premiumUntil) {
+                appState.user.premiumUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+                document.getElementById('premium-badge').style.display = 'inline-block';
+                renderPremiumTab();
+                showToast('✅ Premium attivato!', 'success');
+            } else {
+                showToast('ℹ️ Hai già un abbonamento attivo', 'success');
+            }
+        }
+
+        // ===========================
+        // SOCIAL PAGE
+        // ===========================
+        function initSocial() {
+            renderLeaderboard();
+            renderActivityFeed();
+        }
+
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = '';
+            
+            appState.leaderboard.forEach((entry, index) => {
+                const isCurrentUser = entry.userId === appState.user.id;
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
+                
+                const item = document.createElement('div');
+                item.className = 'leaderboard-entry';
+                if (isCurrentUser) item.style.background = 'rgba(37, 99, 235, 0.1)';
+                
+                item.innerHTML = `
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <div class="leaderboard-rank">${medal}</div>
+                        <div class="leaderboard-name">
+                            <p>${entry.name}</p>
+                            ${isCurrentUser ? '<span>Tu</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="leaderboard-xp">${entry.xp} XP</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderActivityFeed() {
+            const container = document.getElementById('activity-feed');
+            container.innerHTML = '';
+            
+            const activities = [
+                { title: 'Utente ha completato un check-in', location: 'Bari Vecchia', time: '2 ore fa', xp: 100 },
+                { title: 'Utente ha guadagnato un badge', location: 'Explorer', time: '5 ore fa', xp: 50 },
+                { title: 'Utente ha condiviso su Instagram', location: 'Lungomare', time: '1 giorno fa', xp: 25 }
+            ];
+            
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-title">${activity.title}</div>
+                    <div class="activity-meta">${activity.location} • ${activity.time}</div>
+                    <div class="activity-xp">+${activity.xp} XP</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function share(platform) {
+            const content = document.getElementById('share-content').value || 'Sto esplorando Bari con BeeHunter! #BeeHunter';
+            showToast(`✅ Condiviso su ${platform}! +25 XP`, 'success');
+            appState.user.xpTotal += 25;
+            document.getElementById('stat-xp').textContent = appState.user.xpTotal;
+            document.getElementById('share-content').value = '';
+        }
+
+        // ===========================
+        // PROFILE PAGE
+        // ===========================
+        function initProfile() {
+            document.getElementById('user-name').textContent = appState.user.name;
+            document.getElementById('user-email').textContent = appState.user.email;
+            document.getElementById('stat-xp').textContent = appState.user.xpTotal;
+            document.getElementById('stat-streak').textContent = appState.user.streakDays;
+            document.getElementById('stat-badges').textContent = appState.badges.length;
+            document.getElementById('stat-bookings').textContent = appState.user.bookingCount;
+            document.getElementById('stat-checkins').textContent = appState.user.checkInCount;
+            document.getElementById('stat-member').textContent = formatDate(appState.user.createdAt);
+            
+            if (appState.user.premiumUntil) {
+                document.getElementById('premium-badge').style.display = 'inline-block';
+            }
+            
+            renderBadges();
+            renderNotifications();
+        }
+
+        function renderBadges() {
+            const container = document.getElementById('badge-grid');
+            container.innerHTML = '';
+            
+            appState.badges.forEach(badge => {
+                const item = document.createElement('div');
+                item.className = 'badge-item';
+                item.innerHTML = `
+                    <div class="badge-icon">${badge.icon}</div>
+                    <div class="badge-name">${badge.name}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notifications-list');
+            container.innerHTML = '';
+            
+            appState.notifications.forEach(notif => {
+                const item = document.createElement('div');
+                item.className = 'notification-item';
+                item.innerHTML = `
+                    <div class="notification-title">${notif.title}</div>
+                    <div class="notification-message">${notif.message}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // ===========================
+        // INITIALIZATION
+        // ===========================
+        window.addEventListener('load', () => {
+            // Initialize geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        appState.userLocation = {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude
+                        };
+                    },
+                    () => {
+                        // Default to Bari if geolocation fails
+                        appState.userLocation = { lat: 41.1371, lon: 16.8755 };
+                    }
+                );
+            }
+        });
+    </script>
+</body>
+</html>
