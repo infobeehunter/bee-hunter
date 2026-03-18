@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeHunter - Scopri Bari</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Maps API - Usa la tua chiave API -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry"></script> -->
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-brand">
+                    <span class="logo-icon">🐝</span>
+                    <span class="logo-text">BeeHunter</span>
+                </div>
+                <div class="navbar-menu">
+                    <button class="nav-btn active" data-page="radar">
+                        <i class="fas fa-map-location-dot"></i>
+                        <span>Radar</span>
+                    </button>
+                    <button class="nav-btn" data-page="shop">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Shop</span>
+                    </button>
+                    <button class="nav-btn" data-page="social">
+                        <i class="fas fa-share-nodes"></i>
+                        <span>Social</span>
+                    </button>
+                    <button class="nav-btn" data-page="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profilo</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- RADAR PAGE -->
+            <section id="radar-page" class="page active">
+                <div class="radar-header">
+                    <div class="header-top">
+                        <h1><i class="fas fa-map-location-dot"></i> Radar</h1>
+                        <p>Scopri i luoghi di Bari</p>
+                    </div>
+                    
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Cerca un luogo...">
+                    </div>
+
+                    <div class="category-filters">
+                        <button class="filter-btn active" data-category="all">Tutti</button>
+                        <button class="filter-btn" data-category="Cultura">🏛️ Cultura</button>
+                        <button class="filter-btn" data-category="Natura">🌿 Natura</button>
+                        <button class="filter-btn" data-category="Food">🍽️ Food</button>
+                        <button class="filter-btn" data-category="Eventi">🎉 Eventi</button>
+                        <button class="filter-btn" data-category="Segreto">🔐 Segreto</button>
+                    </div>
+                </div>
+
+                <div class="radar-container">
+                    <div id="map" class="map-container"></div>
+                    
+                    <div id="poi-detail" class="poi-detail hidden">
+                        <div class="poi-card">
+                            <button class="close-btn" id="close-poi">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="poi-header">
+                                <span id="poi-icon" class="poi-icon">🏛️</span>
+                                <h3 id="poi-name">Nome POI</h3>
+                            </div>
+                            <p id="poi-description" class="poi-description">Descrizione</p>
+                            <div class="poi-info">
+                                <span id="poi-distance">📍 ? km</span>
+                                <span id="poi-xp" class="xp-badge">+0 XP</span>
+                            </div>
+                            <button id="checkin-btn" class="btn btn-primary btn-block">
+                                📍 Check-in
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="poi-list-container">
+                        <div id="poi-list" class="poi-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SHOP PAGE -->
+            <section id="shop-page" class="page">
+                <div class="shop-header">
+                    <h1>🛍️ Shop</h1>
+                    <p>Coupon e abbonamenti</p>
+                </div>
+
+                <div class="shop-tabs">
+                    <button class="tab-btn active" data-tab="coupon">
+                        <i class="fas fa-gift"></i> Coupon
+                    </button>
+                    <button class="tab-btn" data-tab="premium">
+                        <i class="fas fa-bolt"></i> Premium
+                    </button>
+                </div>
+
+                <!-- Coupon Tab -->
+                <div id="coupon-tab" class="tab-content active">
+                    <div id="coupon-list" class="coupon-list"></div>
+                </div>
+
+                <!-- Premium Tab -->
+                <div id="premium-tab" class="tab-content">
+                    <div class="premium-card">
+                        <div class="premium-header">
+                            <div>
+                                <h3>BeeHunter Premium</h3>
+                                <p>Sblocca tutte le funzionalità</p>
+                            </div>
+                            <span class="premium-price">€9.99</span>
+                        </div>
+                        <ul class="premium-features">
+                            <li><span class="check">✓</span> Accesso a tutti i POI segreti</li>
+                            <li><span class="check">✓</span> Doppio XP su tutti i check-in</li>
+                            <li><span class="check">✓</span> Coupon esclusivi</li>
+                            <li><span class="check">✓</span> Supporto prioritario</li>
+                            <li><span class="check">✓</span> Badge premium esclusivo</li>
+                        </ul>
+                        <button class="btn btn-primary btn-block">
+                            Sottoscrivi per €9.99/mese
+                        </button>
+                    </div>
+
+                    <div class="features-comparison">
+                        <h4>Confronta i piani</h4>
+                        <div class="comparison-item">
+                            <span>POI Segreti</span>
+                            <span class="comparison-value">Premium</span>
+                        </div>
+                        <div class="comparison-item">
+                            <span>Moltiplicatore XP</span>
+                            <span class="comparison-value">2x</span>
+                        </div>
+                        <div class="comparison-item">
+                            <span>Coupon esclusivi</span>
+                            <span class="comparison-value">Illimitati</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coupon Detail Modal -->
+                <div id="coupon-modal" class="modal hidden">
+                    <div class="modal-content">
+                        <h2 id="modal-coupon-title">Titolo Coupon</h2>
+                        <p id="modal-coupon-desc">Descrizione</p>
+                        <div class="modal-discount">
+                            <p>Sconto</p>
+                            <p id="modal-coupon-discount" class="discount-value">-50%</p>
+                        </div>
+                        <div class="modal-code">
+                            <p>Codice coupon</p>
+                            <p id="modal-coupon-code" class="code-value">PROMO2024</p>
+                        </div>
+                        <p id="modal-coupon-expires" class="expires-text">Scade il ...</p>
+                        <div class="modal-actions">
+                            <button class="btn btn-outline" id="modal-close-btn">Chiudi</button>
+                            <button class="btn btn-primary" id="modal-redeem-btn">Riscatta</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SOCIAL PAGE -->
+            <section id="social-page" class="page">
+                <div class="social-header">
+                    <h1>👥 Social</h1>
+                    <p>Condividi e competi</p>
+                </div>
+
+                <!-- Share Section -->
+                <div class="share-section">
+                    <h3>Condividi la tua avventura</h3>
+                    <textarea id="share-content" placeholder="Scrivi un messaggio personalizzato... (opzionale)" rows="3"></textarea>
+                    
+                    <div class="share-platforms">
+                        <button class="platform-btn" data-platform="instagram">
+                            <span class="platform-icon">📷</span>
+                            <span>Instagram</span>
+                        </button>
+                        <button class="platform-btn" data-platform="tiktok">
+                            <span class="platform-icon">🎵</span>
+                            <span>TikTok</span>
+                        </button>
+                        <button class="platform-btn" data-platform="twitter">
+                            <span class="platform-icon">𝕏</span>
+                            <span>Twitter</span>
+                        </button>
+                        <button class="platform-btn" data-platform="facebook">
+                            <span class="platform-icon">👍</span>
+                            <span>Facebook</span>
+                        </button>
+                    </div>
+                    <p class="share-info">Condividi con #BeeHunter e guadagna +25 XP!</p>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div class="leaderboard-section">
+                    <h3><span class="trophy-icon">🏆</span> Classifica Settimanale</h3>
+                    <div id="leaderboard" class="leaderboard-list"></div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="activity-section">
+                    <h3><span class="activity-icon">📱</span> Attività Recente</h3>
+                    <div id="activity-feed" class="activity-list"></div>
+                </div>
+            </section>
+
+            <!-- PROFILE PAGE -->
+            <section id="profile-page" class="page">
+                <div class="profile-header">
+                    <h1>👤 Profilo</h1>
+                    <p>Il tuo account BeeHunter</p>
+                </div>
+
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="user-header">
+                        <div>
+                            <h2 id="user-name">Utente</h2>
+                            <p id="user-email">email@example.com</p>
+                        </div>
+                        <span class="user-avatar">🐝</span>
+                    </div>
+                    <div id="premium-badge" class="premium-badge hidden">
+                        ⭐ Premium
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <p class="stat-label">XP Totali</p>
+                        <p id="stat-xp" class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <p class="stat-label">Streak</p>
+                        <p id="stat-streak" class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <p class="stat-label">Badge</p>
+                        <p id="stat-badges" class="stat-value">0</p>
+                    </div>
+                </div>
+
+                <!-- Activity Stats -->
+                <div class="profile-card">
+                    <h3>Statistiche</h3>
+                    <div class="stats-list">
+                        <div class="stat-row">
+                            <span>Prenotazioni</span>
+                            <span id="stat-bookings">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Ultimi check-in</span>
+                            <span id="stat-checkins">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Membro da</span>
+                            <span id="stat-joined">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badges Section -->
+                <div id="badges-section" class="profile-card hidden">
+                    <h3><i class="fas fa-award"></i> I tuoi Badge</h3>
+                    <div id="badges-grid" class="badges-grid"></div>
+                </div>
+
+                <!-- Notifications -->
+                <div id="notifications-section" class="profile-card hidden">
+                    <h3>Notifiche Recenti</h3>
+                    <div id="notifications-list" class="notifications-list"></div>
+                </div>
+
+                <!-- Actions -->
+                <div class="profile-actions">
+                    <button class="btn btn-outline btn-block">
+                        <i class="fas fa-gear"></i> Impostazioni
+                    </button>
+                    <button class="btn btn-outline btn-block">
+                        <i class="fas fa-fire"></i> Sfide Attive
+                    </button>
+                    <button class="btn btn-danger btn-block" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="profile-footer">
+                    <p>BeeHunter v1.0.0</p>
+                    <p>
+                        <a href="#">Privacy Policy</a> • 
+                        <a href="#">Termini di Servizio</a>
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
